@@ -1,0 +1,14 @@
+# py.test
+.cache
+
+# python 2.7
+__pycache__/
+*.py[cod]
+*$py.class
+
+# pyenv
+.python-version
+
+# IntelliJ / PyCharm
+.idea/
+.iml
