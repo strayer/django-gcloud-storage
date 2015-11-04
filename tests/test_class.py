@@ -134,7 +134,7 @@ class TestGCloudStorageClass:
         self.upload_test_file(self.TEST_FILE_NAME, self.TEST_FILE_CONTENT)
         assert self.storage.size(self.TEST_FILE_NAME) == len(self.TEST_FILE_CONTENT)
 
-    def test_should_return_publicy_downloadable_url(self):
+    def test_should_return_publicly_downloadable_url(self):
         self.upload_test_file(self.TEST_FILE_NAME, self.TEST_FILE_CONTENT)
 
         assert urllib2.urlopen(self.storage.url(self.TEST_FILE_NAME)).read() == self.TEST_FILE_CONTENT
