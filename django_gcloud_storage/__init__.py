@@ -1,23 +1,20 @@
 # -*- encoding: utf-8 -*-
 from __future__ import unicode_literals
 
-import os
-
 import datetime
+import os
+import re
 import urlparse
 from tempfile import SpooledTemporaryFile
-
-import re
 
 from django.core.exceptions import SuspiciousFileOperation
 from django.core.files.base import File
 from django.core.files.storage import Storage
 from django.utils.deconstruct import deconstructible
 from django.utils.encoding import force_text
-from gcloud import storage
-
-from gcloud.exceptions import NotFound
 from gcloud import _helpers as gcloud_helpers
+from gcloud import storage
+from gcloud.exceptions import NotFound
 from gcloud.storage.bucket import Bucket
 
 
