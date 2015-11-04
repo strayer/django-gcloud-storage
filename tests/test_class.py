@@ -103,8 +103,19 @@ class TestGCloudStorageClass:
         f = self.storage.open(self.TEST_FILE_NAME)
         assert f.read() == self.TEST_FILE_CONTENT
 
-    def test_temporary_files_should_be_removed_after_close(self, tmpdir):
-        assert 0
+    def test_small_temporary_files_should_not_be_rolled_over_to_disk(self):
+        self.upload_test_file(self.TEST_FILE_NAME, "a" * 1000)
+
+        f = self.storage.open(self.TEST_FILE_NAME)
+
+        assert not f.file._rolled
+
+    def test_large_temporary_files_should_be_rolled_over_to_disk(self):
+        self.upload_test_file(self.TEST_FILE_NAME, "a" * 1001)
+
+        f = self.storage.open(self.TEST_FILE_NAME)
+
+        assert f.file._rolled
 
     def test_should_return_created_time(self):
         self.upload_test_file(self.TEST_FILE_NAME, self.TEST_FILE_CONTENT)
