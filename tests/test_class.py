@@ -40,6 +40,7 @@ class TestSafeJoin:
     def test_should_not_allow_escaping_base_path(self):
         with pytest.raises(SuspiciousFileOperation):
             safe_join("test", "../index.html")
+        with pytest.raises(SuspiciousFileOperation):
             safe_join("test", "/../index.html")
 
     def test_should_work_with_bytes(self):
