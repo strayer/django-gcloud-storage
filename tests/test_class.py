@@ -79,8 +79,10 @@ class TestGCloudStorageClass:
 
     @classmethod
     def teardown_class(cls):
+        # noinspection PyUnresolvedReferences
         cls.storage.bucket.delete(force=True)
 
+    # noinspection PyUnusedLocal
     def setup_method(self, method):
         # Make sure there are no test files due to a previous test run
         self.storage.bucket.delete_blobs(self.storage.bucket.list_blobs())
@@ -98,7 +100,7 @@ class TestGCloudStorageClass:
     def test_should_create_a_valid_bucket_object(self):
         assert self.storage.bucket.exists()
 
-    def test_should_be_able_to_save_and_open_files(self, tmpdir):
+    def test_should_be_able_to_save_and_open_files(self):
         self.upload_test_file(self.TEST_FILE_NAME, self.TEST_FILE_CONTENT)
 
         f = self.storage.open(self.TEST_FILE_NAME)
