@@ -12,7 +12,7 @@ from django.core.exceptions import SuspiciousFileOperation
 from django.utils import six
 from django.utils.crypto import get_random_string
 
-from django_gcloud_storage import safe_join, DjangoGCloudStorage, remove_prefix
+from django_gcloud_storage import safe_join, DjangoGCloudStorage, remove_prefix, GCloudFile
 
 try:
     from urllib.request import urlopen
@@ -89,6 +89,45 @@ def test_remove_prefix_function():
     assert remove_prefix("/a/b/c/", "/b/") == "/a/b/c/"
 
 
+# noinspection PyMethodMayBeStatic,PyTypeChecker
+class TestGCloudFile:
+    TEST_CONTENT = "Brathähnchen".encode("utf8")
+
+    def test_should_be_able_to_read_and_write(self, monkeypatch):
+        monkeypatch.setattr(GCloudFile, "_update_blob", lambda: None)
+
+        f = GCloudFile(None)
+        f.open("w")
+        assert f.read() == ""
+        f.write(self.TEST_CONTENT)
+        f.seek(0)
+        assert f.read() == self.TEST_CONTENT
+
+    def test_small_temporary_files_should_not_be_rolled_over_to_disk(self, monkeypatch):
+        monkeypatch.setattr(GCloudFile, "_update_blob", lambda: None)
+
+        f = GCloudFile(None, maxsize=1000)
+        f.write("a".encode("utf8") * 1000)
+
+        assert not f._tmpfile._rolled
+
+    def test_large_temporary_files_should_be_rolled_over_to_disk(self, monkeypatch):
+        monkeypatch.setattr(GCloudFile, "_update_blob", lambda: None)
+
+        f = GCloudFile(None, maxsize=1000)
+        f.write("a".encode("utf8") * 1001)
+
+        assert f._tmpfile._rolled
+
+    def test_modified_files_should_be_marked_as_dirty(self, monkeypatch):
+        monkeypatch.setattr(GCloudFile, "_update_blob", lambda: None)
+
+        f = GCloudFile(None)
+        f.write(self.TEST_CONTENT)
+
+        assert f._dirty
+
+
 # noinspection PyClassHasNoInit,PyMethodMayBeStatic
 class TestGCloudStorageClass:
     TEST_FILE_NAME = "test_file_" + get_random_string(6)
@@ -116,20 +155,6 @@ class TestGCloudStorageClass:
 
         f = storage.open(self.TEST_FILE_NAME)
         assert f.read() == self.TEST_FILE_CONTENT
-
-    def test_small_temporary_files_should_not_be_rolled_over_to_disk(self, storage):
-        self.upload_test_file(storage, self.TEST_FILE_NAME, "a".encode("ascii") * 1000)
-
-        f = storage.open(self.TEST_FILE_NAME)
-
-        assert not f.file._rolled
-
-    def test_large_temporary_files_should_be_rolled_over_to_disk(self, storage):
-        self.upload_test_file(storage, self.TEST_FILE_NAME, "a".encode("ascii") * 1001)
-
-        f = storage.open(self.TEST_FILE_NAME)
-
-        assert f.file._rolled
 
     def test_should_return_created_time(self, storage):
         self.upload_test_file(storage, self.TEST_FILE_NAME, self.TEST_FILE_CONTENT)
@@ -205,7 +230,7 @@ class TestGCloudStorageClass:
         first_modified_time = storage.modified_time(self.TEST_FILE_NAME)
         local_tmpfile = storage.open(self.TEST_FILE_NAME)
 
-        assert local_tmpfile.read() == ""
+        assert local_tmpfile.read() == "".encode("ascii")
         local_tmpfile.seek(0)
 
         local_tmpfile.write(self.TEST_FILE_CONTENT)

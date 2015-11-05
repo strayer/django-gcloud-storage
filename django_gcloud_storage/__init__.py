@@ -9,6 +9,7 @@ from tempfile import SpooledTemporaryFile
 from django.core.exceptions import SuspiciousFileOperation
 from django.core.files.base import File
 from django.core.files.storage import Storage
+from django.utils import six
 from django.utils.deconstruct import deconstructible
 from django.utils.encoding import force_text
 from gcloud import _helpers as gcloud_helpers
@@ -56,16 +57,22 @@ class GCloudFile(File):
     write to reupload the file to GCS on close()
     """
 
-    _dirty = False
-    _tmpfile = None
-
-    def __init__(self, maxsize=1000):
+    def __init__(self, blob, maxsize=1000):
+        """
+        :type blob: gcloud.storage.blob.Blob
+        """
+        self._dirty = False
         self._tmpfile = SpooledTemporaryFile(
             max_size=maxsize,
             prefix="django_gcloud_storage_"
         )
 
+        self._blob = blob
+
         super(GCloudFile, self).__init__(self._tmpfile)
+
+    def _update_blob(self):
+        self._blob.upload_from_file(self._tmpfile, rewind=True)
 
     def write(self, content):
         self._dirty = True
@@ -73,8 +80,8 @@ class GCloudFile(File):
 
     def close(self):
         if self._dirty:
-            # TODO upload file to GCS if changed
-            pass
+            self._blob.upload_from_file(self._tmpfile, rewind=True)
+            self._dirty = False
 
         super(GCloudFile, self).close()
 
@@ -138,7 +145,7 @@ class DjangoGCloudStorage(Storage):
         name = safe_join(self.bucket_subdir, name)
 
         blob = self.bucket.get_blob(name)
-        tmpfile = GCloudFile()
+        tmpfile = GCloudFile(blob)
         blob.download_to_file(tmpfile)
         tmpfile.seek(0)
 
