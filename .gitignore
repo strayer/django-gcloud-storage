@@ -1,7 +1,7 @@
 # py.test
 .cache
 
-# python 2.7
+# python
 __pycache__/
 *.py[cod]
 *$py.class
@@ -12,3 +12,6 @@ __pycache__/
 # IntelliJ / PyCharm
 .idea/
 .iml
+
+# Default test credentials
+/test-credentials.json
