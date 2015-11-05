@@ -50,6 +50,35 @@ def remove_prefix(target, prefix):
     return target
 
 
+class GCloudFile(File):
+    """
+    Django file object that wraps a SpooledTemporaryFile and remembers changes on
+    write to reupload the file to GCS on close()
+    """
+
+    _dirty = False
+    _tmpfile = None
+
+    def __init__(self, maxsize=1000):
+        self._tmpfile = SpooledTemporaryFile(
+            max_size=maxsize,
+            prefix="django_gcloud_storage_"
+        )
+
+        super().__init__(self._tmpfile)
+
+    def write(self, content):
+        self._dirty = True
+        super().write(content)
+
+    def close(self):
+        if self._dirty:
+            # TODO upload file to GCS if changed
+            pass
+
+        super().close()
+
+
 # noinspection PyAbstractClass
 @deconstructible
 class DjangoGCloudStorage(Storage):
@@ -104,17 +133,16 @@ class DjangoGCloudStorage(Storage):
         return name
 
     def _open(self, name, mode):
+        # TODO implement mode?
+
         name = safe_join(self.bucket_subdir, name)
 
         blob = self.bucket.get_blob(name)
-        tmpfile = SpooledTemporaryFile(
-            max_size=1000,
-            prefix="django_gcloud_storage_"
-        )
+        tmpfile = GCloudFile()
         blob.download_to_file(tmpfile)
         tmpfile.seek(0)
 
-        return File(tmpfile)
+        return tmpfile
 
     def created_time(self, name):
         name = safe_join(self.bucket_subdir, name)
