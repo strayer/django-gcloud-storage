@@ -4,7 +4,6 @@ from __future__ import unicode_literals
 import datetime
 import os
 import re
-import urlparse
 from tempfile import SpooledTemporaryFile
 
 from django.core.exceptions import SuspiciousFileOperation
@@ -16,6 +15,13 @@ from gcloud import _helpers as gcloud_helpers
 from gcloud import storage
 from gcloud.exceptions import NotFound
 from gcloud.storage.bucket import Bucket
+
+try:
+    # For Python 3.0 and later
+    from urllib import parse as urlparse
+except ImportError:
+    # Fall back to Python 2's urllib2
+    import urlparse
 
 
 def safe_join(base, path):

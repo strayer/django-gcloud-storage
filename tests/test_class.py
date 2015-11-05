@@ -4,7 +4,6 @@ from __future__ import unicode_literals
 import datetime
 import os
 import string
-import urllib2
 from tempfile import TemporaryFile
 
 import gcloud.exceptions
@@ -13,6 +12,13 @@ from django.core.exceptions import SuspiciousFileOperation
 from django.utils.crypto import get_random_string
 
 from django_gcloud_storage import safe_join, DjangoGCloudStorage, remove_prefix
+
+try:
+    # For Python 3.0 and later
+    from urllib.request import urlopen
+except ImportError:
+    # Fall back to Python 2's urllib2
+    from urllib2 import urlopen
 
 TESTS_DIR = os.path.dirname(os.path.realpath(__file__))
 
@@ -107,14 +113,14 @@ class TestGCloudStorageClass:
         assert f.read() == self.TEST_FILE_CONTENT
 
     def test_small_temporary_files_should_not_be_rolled_over_to_disk(self):
-        self.upload_test_file(self.TEST_FILE_NAME, "a" * 1000)
+        self.upload_test_file(self.TEST_FILE_NAME, "a".encode("ascii") * 1000)
 
         f = self.storage.open(self.TEST_FILE_NAME)
 
         assert not f.file._rolled
 
     def test_large_temporary_files_should_be_rolled_over_to_disk(self):
-        self.upload_test_file(self.TEST_FILE_NAME, "a" * 1001)
+        self.upload_test_file(self.TEST_FILE_NAME, "a".encode("ascii") * 1001)
 
         f = self.storage.open(self.TEST_FILE_NAME)
 
@@ -151,7 +157,7 @@ class TestGCloudStorageClass:
     def test_should_return_publicly_downloadable_url(self):
         self.upload_test_file(self.TEST_FILE_NAME, self.TEST_FILE_CONTENT)
 
-        assert urllib2.urlopen(self.storage.url(self.TEST_FILE_NAME)).read() == self.TEST_FILE_CONTENT
+        assert urlopen(self.storage.url(self.TEST_FILE_NAME)).read() == self.TEST_FILE_CONTENT
 
     def test_should_work_with_utf8(self):
         self.upload_test_file(self.TEST_FILE_NAME_UNICODE.encode("utf8"), self.TEST_FILE_CONTENT)
