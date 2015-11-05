@@ -65,18 +65,18 @@ class GCloudFile(File):
             prefix="django_gcloud_storage_"
         )
 
-        super().__init__(self._tmpfile)
+        super(GCloudFile, self).__init__(self._tmpfile)
 
     def write(self, content):
         self._dirty = True
-        super().write(content)
+        super(GCloudFile, self).write(content)
 
     def close(self):
         if self._dirty:
             # TODO upload file to GCS if changed
             pass
 
-        super().close()
+        super(GCloudFile, self).close()
 
 
 # noinspection PyAbstractClass

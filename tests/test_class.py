@@ -9,6 +9,7 @@ from tempfile import TemporaryFile
 import gcloud.exceptions
 import pytest
 from django.core.exceptions import SuspiciousFileOperation
+from django.utils import six
 from django.utils.crypto import get_random_string
 
 from django_gcloud_storage import safe_join, DjangoGCloudStorage, remove_prefix
@@ -95,6 +96,9 @@ class TestGCloudStorageClass:
     TEST_FILE_CONTENT = "Brathähnchen".encode("utf8")
 
     def upload_test_file(self, storage, name, content):
+        if six.PY3 and isinstance(content, str):
+            content = content.encode("utf8")
+
         with TemporaryFile() as testfile:
             testfile.write(content)
             testfile.seek(0)
