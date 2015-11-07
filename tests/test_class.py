@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 import datetime
 import os
 import string
+import ssl
 from tempfile import TemporaryFile
 
 import gcloud.exceptions
@@ -186,8 +187,7 @@ class TestGCloudStorageClass:
 
     def test_should_return_publicly_downloadable_url(self, storage):
         self.upload_test_file(storage, self.TEST_FILE_NAME, self.TEST_FILE_CONTENT)
-
-        assert urlopen(storage.url(self.TEST_FILE_NAME)).read() == self.TEST_FILE_CONTENT
+        assert urlopen(storage.url(self.TEST_FILE_NAME), context=ssl._create_unverified_context()).read() == self.TEST_FILE_CONTENT
 
     def test_should_work_with_utf8(self, storage):
         self.upload_test_file(storage, self.TEST_FILE_NAME_UNICODE.encode("utf8"), self.TEST_FILE_CONTENT)
