@@ -144,6 +144,13 @@ class TestGCloudStorageClass:
             testfile.seek(0)
             storage.save(name, testfile)
 
+    def test_should_create_blob_at_correct_path(self, storage):
+        with TemporaryFile() as testfile:
+            testfile.write(self.TEST_FILE_CONTENT)
+            testfile.seek(0)
+            storage_path = storage.save(self.TEST_FILE_NAME, testfile)
+        assert storage_path == self.TEST_FILE_NAME
+
     def test_should_create_a_valid_client_object(self, storage):
         with pytest.raises(gcloud.exceptions.NotFound):
             storage.client.get_bucket("some_random_bucket_name_that_doesnt_exist")
