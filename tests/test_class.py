@@ -35,22 +35,22 @@ def storage(storage_object):
 # noinspection PyClassHasNoInit,PyMethodMayBeStatic
 class TestSafeJoin:
     def test_should_join_urls(self):
-        assert safe_join("test", "index.html") == "/test/index.html"
+        assert safe_join("test", "index.html") == "test/index.html"
 
     def test_should_not_break_on_slash_on_base(self):
-        assert safe_join("test/", "index.html") == "/test/index.html"
-        assert safe_join("test///", "index.html") == "/test/index.html"
+        assert safe_join("test/", "index.html") == "test/index.html"
+        assert safe_join("test///", "index.html") == "test/index.html"
 
-    def test_should_enforce_starting_slash_on_base(self):
-        assert safe_join("/test", "index.html") == "/test/index.html"
-        assert safe_join("////test", "index.html") == "/test/index.html"
+    def test_should_enforce_no_starting_slash_on_base(self):
+        assert safe_join("/test", "index.html") == "test/index.html"
+        assert safe_join("////test", "index.html") == "test/index.html"
 
     def test_should_resolve_dots_to_absolute_path(self):
-        assert safe_join("test", "/test/../index.html") == "/test/index.html"
+        assert safe_join("test", "/test/../index.html") == "test/index.html"
 
     def test_should_resolve_multiple_slashes(self):
-        assert safe_join("test", "/test//abc////index.html") == "/test/test/abc/index.html"
-        assert safe_join("test///", "///test//abc////index.html") == "/test/test/abc/index.html"
+        assert safe_join("test", "/test//abc////index.html") == "test/test/abc/index.html"
+        assert safe_join("test///", "///test//abc////index.html") == "test/test/abc/index.html"
 
     def test_should_not_allow_escaping_base_path(self):
         with pytest.raises(SuspiciousFileOperation):
@@ -59,12 +59,12 @@ class TestSafeJoin:
             safe_join("test", "/../index.html")
 
     def test_should_work_with_bytes(self):
-        assert safe_join(b"test", "index.html") == "/test/index.html"
-        assert safe_join("test", b"index.html") == "/test/index.html"
-        assert safe_join(b"test", b"index.html") == "/test/index.html"
+        assert safe_join(b"test", "index.html") == "test/index.html"
+        assert safe_join("test", b"index.html") == "test/index.html"
+        assert safe_join(b"test", b"index.html") == "test/index.html"
 
     def test_should_work_with_unicode_characters(self):
-        assert safe_join("test", "brathähnchen.html") == "/test/brathähnchen.html"
+        assert safe_join("test", "brathähnchen.html") == "test/brathähnchen.html"
 
 
 def test_remove_prefix_function():

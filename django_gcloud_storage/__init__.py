@@ -26,12 +26,12 @@ except ImportError:
 
 
 def safe_join(base, path):
-    base = "/" + force_text(base).lstrip("/").rstrip("/") + "/"
+    base = force_text(base).lstrip("/").rstrip("/") + "/"
     path = force_text(path).lstrip("/")
 
     # Ugh... there must be a better way that I can't think of right now
-    if base == "//":
-        base = "/"
+    if base == "/":
+        base = ""
 
     resolved_url = urlparse.urljoin(base, path)
 
