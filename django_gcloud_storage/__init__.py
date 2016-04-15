@@ -6,6 +6,7 @@ import os
 import re
 from tempfile import SpooledTemporaryFile
 
+from django.conf import settings
 from django.core.exceptions import SuspiciousFileOperation
 from django.core.files.base import File
 from django.core.files.storage import Storage
@@ -93,23 +94,26 @@ class GCloudFile(File):
 @deconstructible
 class DjangoGCloudStorage(Storage):
 
-    def __init__(self, project, bucket, credentials_file_path):
+    def __init__(self, project=None, bucket=None, credentials_file_path=None):
         self._client = None
         self._bucket = None
 
-        assert isinstance(bucket, str) or isinstance(bucket, unicode), "Bucket must be a string"
-        assert bucket != "", "Bucket can't be empty"
-
+        if bucket is not None:
         self.bucket_name = bucket
+        else:
+            self.bucket_name = settings.GCS_BUCKET
 
-        assert os.path.exists(credentials_file_path), "Credentials file not found"
-
+        if credentials_file_path is not None:
         self.credentials_file_path = credentials_file_path
+        else:
+            self.credentials_file_path = settings.GCS_CREDENTIALS_FILE_PATH
 
-        assert isinstance(project, str) or isinstance(bucket, unicode), "Project must be a string"
-        assert project != "", "Project can't be empty"
+        assert os.path.exists(self.credentials_file_path), "Credentials file not found"
 
+        if project is not None:
         self.project_name = project
+        else:
+            self.project_name = settings.GCS_PROJECT
 
         self.bucket_subdir = ''  # TODO should be a parameter
 
