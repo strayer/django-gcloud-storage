@@ -14,12 +14,22 @@ from django.utils.crypto import get_random_string
 
 from django_gcloud_storage import safe_join, remove_prefix, GCloudFile
 
-try:
-    from urllib.request import urlopen
-except ImportError:
-    from urllib2 import urlopen
-
 TESTS_DIR = os.path.dirname(os.path.realpath(__file__))
+
+
+def urlopen(*args, **kwargs):
+    try:
+        from urllib.request import urlopen
+    except ImportError:
+        from urllib2 import urlopen
+
+    try:
+        # Ignore SSL errors (won't work on Py3.3 but can be ignored there)
+        kwargs["context"] = ssl._create_unverified_context()
+    except AttributeError:  # Py3.3
+        pass
+
+    return urlopen(*args, **kwargs)
 
 
 @pytest.fixture
@@ -176,7 +186,7 @@ class TestGCloudStorageClass:
 
     def test_should_return_publicly_downloadable_url(self, storage):
         self.upload_test_file(storage, self.TEST_FILE_NAME, self.TEST_FILE_CONTENT)
-        assert urlopen(storage.url(self.TEST_FILE_NAME), context=ssl._create_unverified_context()).read() == self.TEST_FILE_CONTENT
+        assert urlopen(storage.url(self.TEST_FILE_NAME)).read() == self.TEST_FILE_CONTENT
 
     def test_should_work_with_utf8(self, storage):
         self.upload_test_file(storage, self.TEST_FILE_NAME_UNICODE, self.TEST_FILE_CONTENT)
