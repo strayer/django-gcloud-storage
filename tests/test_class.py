@@ -45,7 +45,9 @@ def storage_object(request):
 @pytest.fixture
 def storage(storage_object):
     # Make sure there are no test files due to a previous test run
-    storage_object.bucket.delete_blobs(storage_object.bucket.list_blobs())
+    from django_gcloud_storage import prepare_name
+    for blob in storage_object.bucket.list_blobs():
+        storage_object.bucket.delete_blob(prepare_name(blob.name))
 
     return storage_object
 
@@ -99,7 +101,7 @@ class TestGCloudFile:
 
         f = GCloudFile(None)
         f.open("w")
-        assert f.read() == ""
+        assert f.read() == (b"" if six.PY3 else "")
         f.write(self.TEST_CONTENT)
         f.seek(0)
         assert f.read() == self.TEST_CONTENT
@@ -197,12 +199,12 @@ class TestGCloudStorageClass:
         assert urlopen(storage.url(self.TEST_FILE_NAME), context=ssl._create_unverified_context()).read() == self.TEST_FILE_CONTENT
 
     def test_should_work_with_utf8(self, storage):
-        self.upload_test_file(storage, self.TEST_FILE_NAME_UNICODE.encode("utf8"), self.TEST_FILE_CONTENT)
+        self.upload_test_file(storage, self.TEST_FILE_NAME_UNICODE, self.TEST_FILE_CONTENT)
 
-        storage.exists(self.TEST_FILE_NAME_UNICODE.encode("utf8"))
+        storage.exists(self.TEST_FILE_NAME_UNICODE)
 
         # Don't explode when trying to find a available name for existing files...
-        self.upload_test_file(storage, self.TEST_FILE_NAME_UNICODE.encode("utf8"), self.TEST_FILE_CONTENT)
+        self.upload_test_file(storage, self.TEST_FILE_NAME_UNICODE, self.TEST_FILE_CONTENT)
 
     def test_should_be_able_to_list_dirs_and_files(self, storage):
         subdir_file_pattern = "/subdir/%s.%d"
