@@ -9,9 +9,8 @@ from tempfile import SpooledTemporaryFile
 from django.core.exceptions import SuspiciousFileOperation
 from django.core.files.base import File
 from django.core.files.storage import Storage
-from django.utils import six
 from django.utils.deconstruct import deconstructible
-from django.utils.encoding import force_text
+from django.utils.encoding import force_text, smart_str
 from gcloud import _helpers as gcloud_helpers
 from gcloud import storage
 from gcloud.exceptions import NotFound
@@ -43,6 +42,10 @@ def safe_join(base, path):
             'component ({})'.format(resolved_url, base))
 
     return resolved_url
+
+
+def prepare_name(name):
+    return smart_str(name, encoding='utf-8')
 
 
 def remove_prefix(target, prefix):
@@ -133,6 +136,8 @@ class DjangoGCloudStorage(Storage):
 
     def _save(self, name, content):
         name = safe_join(self.bucket_subdir, name)
+        name = prepare_name(name)
+
 
         blob = self.bucket.blob(name)
         blob.upload_from_file(content)
@@ -143,6 +148,7 @@ class DjangoGCloudStorage(Storage):
         # TODO implement mode?
 
         name = safe_join(self.bucket_subdir, name)
+        name = prepare_name(name)
 
         blob = self.bucket.get_blob(name)
         tmpfile = GCloudFile(blob)
@@ -153,6 +159,7 @@ class DjangoGCloudStorage(Storage):
 
     def created_time(self, name):
         name = safe_join(self.bucket_subdir, name)
+        name = prepare_name(name)
 
         blob = self.bucket.get_blob(name)
 
@@ -164,6 +171,7 @@ class DjangoGCloudStorage(Storage):
 
     def delete(self, name):
         name = safe_join(self.bucket_subdir, name)
+        name = prepare_name(name)
 
         try:
             self.bucket.delete_blob(name)
@@ -172,11 +180,13 @@ class DjangoGCloudStorage(Storage):
 
     def exists(self, name):
         name = safe_join(self.bucket_subdir, name)
+        name = prepare_name(name)
 
         return self.bucket.get_blob(name) is not None
 
     def size(self, name):
         name = safe_join(self.bucket_subdir, name)
+        name = prepare_name(name)
 
         blob = self.bucket.get_blob(name)
 
@@ -184,6 +194,7 @@ class DjangoGCloudStorage(Storage):
 
     def modified_time(self, name):
         name = safe_join(self.bucket_subdir, name)
+        name = prepare_name(name)
 
         blob = self.bucket.get_blob(name)
 
@@ -191,6 +202,7 @@ class DjangoGCloudStorage(Storage):
 
     def listdir(self, path):
         path = safe_join(self.bucket_subdir, path)
+        path = prepare_name(path)
 
         iterator = self.bucket.list_blobs(
             prefix=path,
@@ -208,5 +220,6 @@ class DjangoGCloudStorage(Storage):
 
     def url(self, name):
         name = safe_join(self.bucket_subdir, name)
+        name = prepare_name(name)
 
         return self.bucket.get_blob(name).generate_signed_url(expiration=datetime.datetime.now() + datetime.timedelta(hours=1))
