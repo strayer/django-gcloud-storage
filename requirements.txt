@@ -1,2 +1,2 @@
-django>=1.8
+# django>=1.8 # specified in tox.ini
 gcloud>=0.8.0
