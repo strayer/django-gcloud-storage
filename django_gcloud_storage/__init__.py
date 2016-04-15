@@ -76,7 +76,9 @@ class GCloudFile(File):
         super(GCloudFile, self).__init__(self._tmpfile)
 
     def _update_blob(self):
-        self._blob.upload_from_file(self._tmpfile, rewind=True)
+        # Specify explicit size to avoid problems with not yet spooled temporary files
+        # Djangos File.size property already knows how to handle cases like this
+        self._blob.upload_from_file(self._tmpfile, size=self.size, rewind=True)
 
     def write(self, content):
         self._dirty = True
@@ -84,7 +86,7 @@ class GCloudFile(File):
 
     def close(self):
         if self._dirty:
-            self._blob.upload_from_file(self._tmpfile, rewind=True)
+            self._update_blob()
             self._dirty = False
 
         super(GCloudFile, self).close()
@@ -99,19 +101,19 @@ class DjangoGCloudStorage(Storage):
         self._bucket = None
 
         if bucket is not None:
-        self.bucket_name = bucket
+            self.bucket_name = bucket
         else:
             self.bucket_name = settings.GCS_BUCKET
 
         if credentials_file_path is not None:
-        self.credentials_file_path = credentials_file_path
+            self.credentials_file_path = credentials_file_path
         else:
             self.credentials_file_path = settings.GCS_CREDENTIALS_FILE_PATH
 
         assert os.path.exists(self.credentials_file_path), "Credentials file not found"
 
         if project is not None:
-        self.project_name = project
+            self.project_name = project
         else:
             self.project_name = settings.GCS_PROJECT
 
@@ -142,9 +144,11 @@ class DjangoGCloudStorage(Storage):
         name = safe_join(self.bucket_subdir, name)
         name = prepare_name(name)
 
+        # Required for InMemoryUploadedFile objects, as they have no fileno
+        total_bytes = None if not hasattr(content, 'size') else content.size
 
         blob = self.bucket.blob(name)
-        blob.upload_from_file(content)
+        blob.upload_from_file(content, size=total_bytes)
 
         return name
 
