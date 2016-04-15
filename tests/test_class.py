@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 
 import datetime
 import os
-import string
 import ssl
 from tempfile import TemporaryFile
 
@@ -13,7 +12,7 @@ from django.core.exceptions import SuspiciousFileOperation
 from django.utils import six
 from django.utils.crypto import get_random_string
 
-from django_gcloud_storage import safe_join, DjangoGCloudStorage, remove_prefix, GCloudFile
+from django_gcloud_storage import safe_join, remove_prefix, GCloudFile
 
 try:
     from urllib.request import urlopen
@@ -21,25 +20,6 @@ except ImportError:
     from urllib2 import urlopen
 
 TESTS_DIR = os.path.dirname(os.path.realpath(__file__))
-
-
-@pytest.yield_fixture(scope="class")
-def storage_object(request):
-    # create a random test bucket name
-    bucket_name = "test_bucket_" + get_random_string(6, string.ascii_lowercase)
-
-    storage = DjangoGCloudStorage(
-        project=request.config.getoption("--gcs-project-name"),
-        bucket=bucket_name,
-        credentials_file_path=request.config.getoption("--gcs-credentials-file")
-    )
-
-    # Make sure the bucket exists
-    storage.client.create_bucket(bucket_name)
-
-    yield storage
-
-    storage.bucket.delete(force=True)
 
 
 @pytest.fixture

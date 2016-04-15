@@ -1,10 +1,14 @@
 # py.test
 .cache
 
+# tox
+.tox
+
 # python
 __pycache__/
 *.py[cod]
 *$py.class
+*.egg-info/
 
 # pyenv
 .python-version
@@ -15,3 +19,6 @@ __pycache__/
 
 # Default test credentials
 /test-credentials.json
+
+# test_app database
+test_app/db.sqlite3
