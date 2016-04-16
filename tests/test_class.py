@@ -76,6 +76,11 @@ class TestSafeJoin:
     def test_should_work_with_unicode_characters(self):
         assert safe_join("test", "brathähnchen.html") == "test/brathähnchen.html"
 
+    def test_should_normalize_system_dependant_slashes(self):
+        assert safe_join("test", "windows\\slashes") == "test/windows/slashes"
+        assert safe_join("test", "windows\\/slashes") == "test/windows/slashes"
+        assert safe_join("windows\\", "slashes") == "windows/slashes"
+
 
 def test_remove_prefix_function():
     assert remove_prefix("/a/b/c/", "/a/") == "b/c/"

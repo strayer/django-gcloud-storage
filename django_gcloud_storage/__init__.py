@@ -26,8 +26,8 @@ except ImportError:
 
 
 def safe_join(base, path):
-    base = force_text(base).lstrip("/").rstrip("/") + "/"
-    path = force_text(path).lstrip("/")
+    base = force_text(base).replace("\\", "/").lstrip("/").rstrip("/") + "/"
+    path = force_text(path).replace("\\", "/").lstrip("/")
 
     # Ugh... there must be a better way that I can't think of right now
     if base == "/":
