@@ -6,6 +6,7 @@ import os
 import re
 from tempfile import SpooledTemporaryFile
 
+import django
 from django.conf import settings
 from django.core.exceptions import SuspiciousFileOperation
 from django.core.files.base import File
@@ -16,6 +17,8 @@ from gcloud import _helpers as gcloud_helpers
 from gcloud import storage
 from gcloud.exceptions import NotFound
 from gcloud.storage.bucket import Bucket
+
+DJANGO_17 = django.get_version().startswith('1.7.')
 
 try:
     # For Python 3.0 and later
@@ -78,7 +81,13 @@ class GCloudFile(File):
     def _update_blob(self):
         # Specify explicit size to avoid problems with not yet spooled temporary files
         # Djangos File.size property already knows how to handle cases like this
-        self._blob.upload_from_file(self._tmpfile, size=self.size, rewind=True)
+
+        if DJANGO_17 and self._tmpfile.name is None:  # Django bug #22307
+            size = self._tmpfile.tell()
+        else:
+            size = self.size
+
+        self._blob.upload_from_file(self._tmpfile, size=size, rewind=True)
 
     def write(self, content):
         self._dirty = True
