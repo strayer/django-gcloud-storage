@@ -2,13 +2,15 @@
 .cache
 
 # tox
-.tox
+.tox*
 
 # python
 __pycache__/
 *.py[cod]
 *$py.class
 *.egg-info/
+dist/
+build/
 
 # pyenv
 .python-version

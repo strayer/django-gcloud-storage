@@ -1,0 +1,8 @@
+include AUTHORS.rst
+include HISTORY.rst
+include LICENSE.txt
+include README.rst
+include requirements-test.txt
+include tox.ini
+recursive-include test_app *.html *.py
+recursive-include tests *.py

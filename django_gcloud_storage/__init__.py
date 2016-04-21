@@ -18,6 +18,8 @@ from gcloud import storage
 from gcloud.exceptions import NotFound
 from gcloud.storage.bucket import Bucket
 
+__version__ = '0.1.0'
+
 DJANGO_17 = django.get_version().startswith('1.7.')
 
 try:

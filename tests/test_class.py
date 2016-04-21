@@ -2,7 +2,6 @@
 from __future__ import unicode_literals
 
 import datetime
-import os
 import ssl
 from tempfile import TemporaryFile
 
@@ -13,8 +12,6 @@ from django.utils import six
 from django.utils.crypto import get_random_string
 
 from django_gcloud_storage import safe_join, remove_prefix, GCloudFile
-
-TESTS_DIR = os.path.dirname(os.path.realpath(__file__))
 
 
 def urlopen(*args, **kwargs):

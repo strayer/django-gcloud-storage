@@ -2,14 +2,13 @@
 from __future__ import unicode_literals
 
 import contextlib
+import os
+import shutil
 import tempfile
 
 import pytest
-import shutil
-
 from django.core.files import File
 from django.utils.crypto import get_random_string
-import os
 
 from test_app.app.models import ModelWithFileField
 
