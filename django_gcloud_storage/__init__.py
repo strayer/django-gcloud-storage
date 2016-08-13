@@ -240,5 +240,9 @@ class DjangoGCloudStorage(Storage):
     def url(self, name):
         name = safe_join(self.bucket_subdir, name)
         name = prepare_name(name)
+        
+        # if custom domain is specified, we can avoid an API call to GCS
+        if settings.GCS_CUSTOM_DOMAIN:
+            return "https://%s/%s" % (settings.GCS_CUSTOM_DOMAIN, filepath_to_uri(name))
 
         return self.bucket.get_blob(name).generate_signed_url(expiration=datetime.datetime.now() + datetime.timedelta(hours=1))
