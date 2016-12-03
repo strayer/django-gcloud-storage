@@ -41,7 +41,7 @@ setup(
     include_package_data=True,
     install_requires=[
         "gcloud>=0.8.0",
-        "django>=1.7"
+        "django>=1.8"
     ],
     license="BSD",
     zip_safe=False,
@@ -49,9 +49,9 @@ setup(
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Framework :: Django',
-        'Framework :: Django :: 1.7',
         'Framework :: Django :: 1.8',
         'Framework :: Django :: 1.9',
+        'Framework :: Django :: 1.10',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: BSD License',
         'Natural Language :: English',
