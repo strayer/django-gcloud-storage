@@ -2,11 +2,13 @@
 django-gcloud-storage
 =============================
 
-.. image:: https://badge.fury.io/py/django-gcloud-storage.png
-    :target: https://badge.fury.io/py/django-gcloud-storage
+.. image:: https://img.shields.io/pypi/v/django-gcloud-storage.svg
+    :target: https://pypi.python.org/pypi/django-gcloud-storage
 .. image:: https://img.shields.io/pypi/l/django-gcloud-storage.svg
     :target: https://pypi.python.org/pypi/django-gcloud-storage
 .. image:: https://img.shields.io/pypi/pyversions/django-gcloud-storage.svg
+    :target: https://pypi.python.org/pypi/django-gcloud-storage
+.. image:: https://img.shields.io/pypi/format/django-gcloud-storage.svg
     :target: https://pypi.python.org/pypi/django-gcloud-storage
 
 Django storage module implementation for Google Cloud Storage using the gcloud_
