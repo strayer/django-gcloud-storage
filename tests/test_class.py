@@ -5,7 +5,7 @@ import datetime
 import ssl
 from tempfile import TemporaryFile
 
-import gcloud.exceptions
+import google.cloud.exceptions
 import pytest
 from django.core.exceptions import SuspiciousFileOperation
 from django.utils import six
@@ -172,7 +172,7 @@ class TestGCloudStorageClass:
         self.upload_test_file(storage, self.TEST_FILE_NAME, self.TEST_FILE_CONTENT)
         storage.delete(self.TEST_FILE_NAME)
 
-        # Should not raise an exception by gcloud
+        # Should not raise an exception by google.cloud
         assert storage.delete("missing_file") is None
 
     def test_exists_method(self, storage):

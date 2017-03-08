@@ -11,10 +11,10 @@ django-gcloud-storage
 .. image:: https://img.shields.io/pypi/format/django-gcloud-storage.svg
     :target: https://pypi.python.org/pypi/django-gcloud-storage
 
-Django storage module implementation for Google Cloud Storage using the gcloud_
+Django storage module implementation for Google Cloud Storage using the google-cloud_
 python module by Google.
 
-.. _gcloud: https://pypi.python.org/pypi/gcloud
+.. _google-cloud: https://pypi.python.org/pypi/google-cloud
 
 Notice: alpha release
 ---------------------
@@ -31,10 +31,11 @@ Install django-gcloud-storage::
     pip install django-gcloud-storage
 
 Create a GCS service account JSON keyfile and a bucket for your application.
-Check the documentation of gcloud-python and Google Cloud Platform for more
+Check the documentation of google-cloud-python and Google Cloud Platform for more
 details:
 
-https://gcloud-python.readthedocs.org/en/latest/gcloud-auth.html
+https://googlecloudplatform.github.io/google-cloud-python/stable/google-cloud-auth.html
+
 https://cloud.google.com/storage/docs/authentication#generating-a-private-key
 
 Update your Django settings and use it like any other Django storage module::

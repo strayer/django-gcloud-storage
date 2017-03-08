@@ -13,10 +13,10 @@ from django.core.files.base import File
 from django.core.files.storage import Storage
 from django.utils.deconstruct import deconstructible
 from django.utils.encoding import force_text, smart_str
-from gcloud import _helpers as gcloud_helpers
-from gcloud import storage
-from gcloud.exceptions import NotFound
-from gcloud.storage.bucket import Bucket
+from google.cloud import _helpers as gcloud_helpers
+from google.cloud import storage
+from google.cloud.exceptions import NotFound
+from google.cloud.storage.bucket import Bucket
 
 __version__ = '0.1.0'
 
@@ -68,7 +68,7 @@ class GCloudFile(File):
 
     def __init__(self, blob, maxsize=1000):
         """
-        :type blob: gcloud.storage.blob.Blob
+        :type blob: google.cloud.storage.blob.Blob
         """
         self._dirty = False
         self._tmpfile = SpooledTemporaryFile(
@@ -182,7 +182,7 @@ class DjangoGCloudStorage(Storage):
 
         blob = self.bucket.get_blob(name)
 
-        # gcloud doesn't provide a public method for this
+        # google.cloud doesn't provide a public method for this
         value = blob._properties.get("timeCreated", None)
         if value is not None:
             naive = datetime.datetime.strptime(value, gcloud_helpers._RFC3339_MICROS)

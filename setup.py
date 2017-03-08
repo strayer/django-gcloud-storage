@@ -40,12 +40,12 @@ setup(
     ],
     include_package_data=True,
     install_requires=[
-        "gcloud>=0.8.0",
+        "google-cloud>=0.19.0",
         "django>=1.8"
     ],
     license="BSD",
     zip_safe=False,
-    keywords='django-gcloud-storage gcloud gcs',
+    keywords='django-gcloud-storage gcloud google-cloud gcs',
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Framework :: Django',
