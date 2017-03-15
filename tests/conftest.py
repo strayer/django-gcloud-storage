@@ -39,7 +39,7 @@ def storage_object_for_tests(request, bucket_name=None):
 
     yield storage
 
-    # Manually delete all remaining blobs due to a unicode issue in gcloud
+    # Manually delete all remaining blobs due to a unicode issue in google.cloud
     from django_gcloud_storage import prepare_name
     for blob in storage.bucket.list_blobs():
         storage.bucket.delete_blob(prepare_name(blob.name))
