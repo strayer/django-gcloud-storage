@@ -146,7 +146,7 @@ class TestGCloudStorageClass:
         assert storage_path == self.TEST_FILE_NAME
 
     def test_should_create_a_valid_client_object(self, storage):
-        with pytest.raises(gcloud.exceptions.NotFound):
+        with pytest.raises(google.cloud.exceptions.NotFound):
             storage.client.get_bucket("some_random_bucket_name_that_doesnt_exist")
 
     def test_should_create_a_valid_bucket_object(self, storage):
