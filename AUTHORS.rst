@@ -11,3 +11,5 @@ Contributors
 ------------
 
 * Titusz Pan <tp@craft.de>
+* George Pchelkin <george@pchelk.in>
+
