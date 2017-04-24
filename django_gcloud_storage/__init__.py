@@ -107,7 +107,7 @@ class GCloudFile(File):
 @deconstructible
 class DjangoGCloudStorage(Storage):
 
-    def __init__(self, project=None, bucket=None, credentials_file_path=None):
+    def __init__(self, project=None, bucket=None, credentials_file_path=None, unsigned_urls=None):
         self._client = None
         self._bucket = None
 
@@ -127,6 +127,11 @@ class DjangoGCloudStorage(Storage):
             self.project_name = project
         else:
             self.project_name = settings.GCS_PROJECT
+
+        if unsigned_urls is not None:
+            self.unsigned_urls = unsigned_urls
+        else:
+            self.unsigned_urls = getattr(settings, "GCS_UNSIGNED_URLS", False)
 
         self.bucket_subdir = ''  # TODO should be a parameter
 
@@ -240,5 +245,8 @@ class DjangoGCloudStorage(Storage):
     def url(self, name):
         name = safe_join(self.bucket_subdir, name)
         name = prepare_name(name)
+
+        if self.unsigned_urls:
+          return "https://storage.googleapis.com/{}/{}".format(self.bucket.name, name)
 
         return self.bucket.get_blob(name).generate_signed_url(expiration=datetime.datetime.now() + datetime.timedelta(hours=1))
