@@ -132,8 +132,6 @@ class DjangoGCloudStorage(Storage):
             self.use_unsigned_urls = use_unsigned_urls
         else:
             self.use_unsigned_urls = getattr(settings, "GCS_USE_UNSIGNED_URLS", False)
-        if self.use_unsigned_urls:
-          import pdb;pdb.set_trace()
 
         self.bucket_subdir = ''  # TODO should be a parameter
 
