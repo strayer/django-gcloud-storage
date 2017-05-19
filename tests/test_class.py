@@ -239,3 +239,13 @@ class TestGCloudStorageClass:
 
         assert storage.open(self.TEST_FILE_NAME).read() == self.TEST_FILE_CONTENT
         assert storage.modified_time(self.TEST_FILE_NAME) != first_modified_time
+
+    def test_open_should_be_able_to_create_new_file(self, storage):
+        content = self.TEST_FILE_CONTENT
+        if six.PY3 and isinstance(content, str):
+            content = content.encode("utf8")
+
+        with storage.open(self.TEST_FILE_NAME, mode="wb") as f:
+            f.write(content)
+
+        assert storage.exists(self.TEST_FILE_NAME)
