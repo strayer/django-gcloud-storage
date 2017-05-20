@@ -224,6 +224,10 @@ class DjangoGCloudStorage(Storage):
 
         return blob.updated if blob is not None else None
 
+    def get_modified_time(self, name):
+        # In Django>=1.10, modified_time is deprecated, and modified_time will be removed in Django 2.0.
+        return self.modified_time(name)
+
     def listdir(self, path):
         path = safe_join(self.bucket_subdir, path)
         path = prepare_name(path)
