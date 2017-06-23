@@ -3,8 +3,8 @@
 History
 -------
 
-Unreleased
-~~~~~~~~~~
+0.2.0 (2017-06-23)
+~~~~~~~~~~~~~~~~~~
 
 * Use google-cloud package instead of gcloud (package was renamed by Google)
 * Added test support for Django 1.10 and 1.11
