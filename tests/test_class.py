@@ -167,6 +167,7 @@ class TestGCloudStorageClass:
         self.upload_test_file(storage, self.TEST_FILE_NAME, self.TEST_FILE_CONTENT)
 
         assert isinstance(storage.modified_time(self.TEST_FILE_NAME), datetime.datetime)
+        assert isinstance(storage.get_modified_time(self.TEST_FILE_NAME), datetime.datetime)
 
     def test_should_be_able_to_delete_files(self, storage):
         self.upload_test_file(storage, self.TEST_FILE_NAME, self.TEST_FILE_CONTENT)
