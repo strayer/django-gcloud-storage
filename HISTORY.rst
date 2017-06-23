@@ -3,7 +3,7 @@
 History
 -------
 
-0.2.0 (2017-06-23)
+0.2.1 (2017-06-23)
 ~~~~~~~~~~~~~~~~~~
 
 * Use google-cloud package instead of gcloud (package was renamed by Google)
