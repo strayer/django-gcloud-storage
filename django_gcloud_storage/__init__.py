@@ -170,8 +170,13 @@ class DjangoGCloudStorage(Storage):
         name = prepare_name(name)
 
         blob = self.bucket.get_blob(name)
-        tmpfile = GCloudFile(blob)
-        blob.download_to_file(tmpfile)
+        if blob is None:
+            # Create new
+            blob = self.bucket.blob(name)
+            tmpfile = GCloudFile(blob)
+        else:
+            tmpfile = GCloudFile(blob)
+            blob.download_to_file(tmpfile)
         tmpfile.seek(0)
 
         return tmpfile
