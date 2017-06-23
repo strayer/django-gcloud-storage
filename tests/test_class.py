@@ -250,3 +250,11 @@ class TestGCloudStorageClass:
             f.write(content)
 
         assert storage.exists(self.TEST_FILE_NAME)
+
+    def test_use_unsigned_urls_option(self, storage):
+        self.upload_test_file(storage, self.TEST_FILE_NAME, self.TEST_FILE_CONTENT)
+        storage.use_unsigned_urls = True
+        url = storage.url(self.TEST_FILE_NAME)
+        storage.use_unsigned_urls = False
+        for i in ["Signature=", "GoogleAccessId=", "Expires="]:
+            assert i not in url
