@@ -10,7 +10,6 @@ import pytest
 from django.core.exceptions import SuspiciousFileOperation
 from django.utils import six
 from django.utils.crypto import get_random_string
-from django.test import override_settings
 
 from django_gcloud_storage import safe_join, remove_prefix, GCloudFile
 
@@ -241,9 +240,10 @@ class TestGCloudStorageClass:
         assert storage.open(self.TEST_FILE_NAME).read() == self.TEST_FILE_CONTENT
         assert storage.modified_time(self.TEST_FILE_NAME) != first_modified_time
 
-    @override_settings(GCS_USE_UNSIGNED_URLS=True)
     def test_use_unsigned_urls_option(self, storage):
         self.upload_test_file(storage, self.TEST_FILE_NAME, self.TEST_FILE_CONTENT)
+        storage.use_unsigned_urls = True
         url = storage.url(self.TEST_FILE_NAME)
+        storage.use_unsigned_urls = False
         for i in ["Signature=", "GoogleAccessId=", "Expires="]:
-          assert i not in url
+            assert i not in url

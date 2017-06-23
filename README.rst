@@ -62,13 +62,13 @@ Caveats
 * (development) Most tests need access to Google Cloud Storage
 
 Unsigned URLS
--------
+-------------
 
 The module generates signed urls by default. This requires calls to storage API which might take some time if you need to return several images at a time. You can generate unsigned urls using the following setting::
 
   GCS_USE_UNSIGNED_URLS = True
 
-Keep in mind you might need to set the default object permission to public for the unsigned urls to work.  
+Keep in mind you might need to set the default object permission to public for the unsigned urls to work.
 
 Contributing
 ------------
