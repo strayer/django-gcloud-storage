@@ -296,7 +296,7 @@ class DjangoGCloudStorage(Storage):
         cache_expires_seconds = int(cache_expires.total_seconds())
         # Request the signed URL and store it in the cache.
         signed_url = self.bucket.get_blob(name).generate_signed_url(signature_expires)
-        if cache_expires_seconds >= 0:
+        if signed_url and cache_expires_seconds >= 0:
             cache.set(cache_key, signed_url, cache_expires_seconds)
 
         return signed_url
