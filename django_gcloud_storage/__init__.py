@@ -39,6 +39,8 @@ DEFAULTS = {
     # The cache should expire before the timestamp
     # of the signed url. This value can be adjusted.
     "GCS_CACHE_GRACE_TIME_SECONDS": 20,
+    # Add ability to disable and set disabled by default
+    "GCS_ENABLE_URL_CACHING": False,
 }
 
 
@@ -152,6 +154,7 @@ class DjangoGCloudStorage(Storage):
         self.gcs_cache_prefix = get_config_value("GCS_CACHE_PREFIX")
         self.gcs_token_validity_seconds = get_config_value("GCS_TOKEN_VALIDITY_SECONDS")
         self.gcs_cache_grace_time_seconds = get_config_value("GCS_CACHE_GRACE_TIME_SECONDS")
+        self.gcs_enable_cached_urls = get_config_value("GCS_ENABLE_URL_CACHING")
 
         self.bucket_subdir = ''  # TODO should be a parameter
 
@@ -276,13 +279,14 @@ class DjangoGCloudStorage(Storage):
         name = prepare_name(name)
 
         if self.use_unsigned_urls:
-          return "https://storage.googleapis.com/{}/{}".format(self.bucket.name, name)
+            return "https://storage.googleapis.com/{}/{}".format(self.bucket.name, name)
 
-        # First check the cache for a valid entry
-        cache_key = "%s_%s" % (self.gcs_cache_prefix, name)
-        cached_url = cache.get(cache_key)
-        if cached_url:
-            return cached_url
+        if self.gcs_enable_cached_urls:
+            # First check the cache for a valid entry
+            cache_key = "%s_%s" % (self.gcs_cache_prefix, name)
+            cached_url = cache.get(cache_key)
+            if cached_url:
+                return cached_url
 
         # Need to keep "now" around for calculating cache expiry as we want it
         # to be less than the signed_url cache time
@@ -296,7 +300,7 @@ class DjangoGCloudStorage(Storage):
         cache_expires_seconds = int(cache_expires.total_seconds())
         # Request the signed URL and store it in the cache.
         signed_url = self.bucket.get_blob(name).generate_signed_url(signature_expires)
-        if signed_url and cache_expires_seconds >= 0:
+        if signed_url and cache_expires_seconds >= 0 and self.gcs_enable_cached_urls:
             cache.set(cache_key, signed_url, cache_expires_seconds)
 
         return signed_url
