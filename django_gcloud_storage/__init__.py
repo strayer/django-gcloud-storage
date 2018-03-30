@@ -11,6 +11,7 @@ from django.conf import settings
 from django.core.exceptions import SuspiciousFileOperation
 from django.core.files.base import File
 from django.core.files.storage import Storage
+from django.core.cache import cache
 from django.utils.deconstruct import deconstructible
 from django.utils.encoding import force_text, smart_str
 from google.cloud import _helpers as gcloud_helpers
@@ -28,6 +29,21 @@ try:
 except ImportError:
     # Fall back to Python 2's urllib2
     import urlparse
+
+DEFAULTS = {
+    # Prefix for cache entries to ensure uniqueness
+    "GCS_CACHE_PREFIX": "DJANGO_GCLOUD_STORAGE_URL_",
+    # How long a signed URL is valid for. Influences
+    # api call to google signing api (timestamp)
+    "GCS_TOKEN_VALIDITY_SECONDS": 3600,
+    # The cache should expire before the timestamp
+    # of the signed url. This value can be adjusted.
+    "GCS_CACHE_GRACE_TIME_SECONDS": 20,
+}
+
+
+def get_config_value(key):
+    return getattr(settings, key, DEFAULTS.get(key))
 
 
 def safe_join(base, path):
@@ -132,6 +148,10 @@ class DjangoGCloudStorage(Storage):
             self.use_unsigned_urls = use_unsigned_urls
         else:
             self.use_unsigned_urls = getattr(settings, "GCS_USE_UNSIGNED_URLS", False)
+
+        self.gcs_cache_prefix = get_config_value("GCS_CACHE_PREFIX")
+        self.gcs_token_validity_seconds = get_config_value("GCS_TOKEN_VALIDITY_SECONDS")
+        self.gcs_cache_grace_time_seconds = get_config_value("GCS_CACHE_GRACE_TIME_SECONDS")
 
         self.bucket_subdir = ''  # TODO should be a parameter
 
@@ -258,4 +278,25 @@ class DjangoGCloudStorage(Storage):
         if self.use_unsigned_urls:
           return "https://storage.googleapis.com/{}/{}".format(self.bucket.name, name)
 
-        return self.bucket.get_blob(name).generate_signed_url(expiration=datetime.datetime.now() + datetime.timedelta(hours=1))
+        # First check the cache for a valid entry
+        cache_key = "%s_%s" % (self.gcs_cache_prefix, name)
+        cached_url = cache.get(cache_key)
+        if cached_url:
+            return cached_url
+
+        # Need to keep "now" around for calculating cache expiry as we want it
+        # to be less than the signed_url cache time
+        now = datetime.datetime.now()
+        # Calculation used to determine when the signed url token expires
+        signature_expires = now + datetime.timedelta(seconds=self.gcs_token_validity_seconds)
+        # Use grace period from settings to work out when to expire cache entry.
+        # This will be before the signature expires
+        cache_expires = signature_expires - datetime.timedelta(seconds=self.gcs_cache_grace_time_seconds) - now
+        # Need the time differences in seconds for the django caching engine
+        cache_expires_seconds = int(cache_expires.total_seconds())
+        # Request the signed URL and store it in the cache.
+        signed_url = self.bucket.get_blob(name).generate_signed_url(signature_expires)
+        if cache_expires_seconds >= 0:
+            cache.set(cache_key, signed_url, cache_expires_seconds)
+
+        return signed_url
