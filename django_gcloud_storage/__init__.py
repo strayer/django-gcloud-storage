@@ -299,7 +299,10 @@ class DjangoGCloudStorage(Storage):
         # Need the time differences in seconds for the django caching engine
         cache_expires_seconds = int(cache_expires.total_seconds())
         # Request the signed URL and store it in the cache.
-        signed_url = self.bucket.get_blob(name).generate_signed_url(signature_expires)
+        blob = self.bucket.get_blob(name)
+        if not blob:
+            return None
+        signed_url = blob.generate_signed_url(signature_expires)
         if signed_url and cache_expires_seconds >= 0 and self.gcs_enable_cached_urls:
             cache.set(cache_key, signed_url, cache_expires_seconds)
 
