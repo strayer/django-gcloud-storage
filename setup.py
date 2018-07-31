@@ -40,7 +40,7 @@ setup(
     ],
     include_package_data=True,
     install_requires=[
-        "google-cloud>=0.19.0",
+        "google-cloud-storage>=1.10.0",
         "django>=1.8"
     ],
     license="BSD",
