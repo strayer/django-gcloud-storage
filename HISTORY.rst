@@ -4,7 +4,7 @@ History
 -------
 
 0.3.0 (2018-08-08)
-~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~
 
 * Updated test support versions for Django 1.11 - 2.1
 * Added test support for Python 3.7
