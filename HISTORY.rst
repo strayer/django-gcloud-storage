@@ -3,6 +3,17 @@
 History
 -------
 
+Unreleased
+~~~~~~~~~~
+
+* Updated test support versions for Django 1.11 - 2.1
+* Added test support for Python 3.7
+* Added test support for Pypy 3
+* Dropped support for Python 3.3
+* Dropped support for Django 1.11 or older
+* Tests are much quicker and do less API requests
+* Switched to google-cloud-storage library
+
 0.2.1 (2017-06-23)
 ~~~~~~~~~~~~~~~~~~
 

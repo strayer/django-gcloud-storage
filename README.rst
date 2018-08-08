@@ -11,10 +11,10 @@ django-gcloud-storage
 .. image:: https://img.shields.io/pypi/format/django-gcloud-storage.svg
     :target: https://pypi.python.org/pypi/django-gcloud-storage
 
-Django storage module implementation for Google Cloud Storage using the google-cloud_
-python module by Google.
+Django storage module implementation for Google Cloud Storage using the
+google-cloud-storage_ python module by Google.
 
-.. _google-cloud: https://pypi.python.org/pypi/google-cloud
+.. _google-cloud-storage: https://pypi.org/project/google-cloud-storage/
 
 Notice: alpha release
 ---------------------
@@ -31,10 +31,10 @@ Install django-gcloud-storage::
     pip install django-gcloud-storage
 
 Create a GCS service account JSON keyfile and a bucket for your application.
-Check the documentation of google-cloud-python and Google Cloud Platform for more
-details:
+Check the documentation of google-cloud-python and Google Cloud Platform for
+more details:
 
-https://googlecloudplatform.github.io/google-cloud-python/stable/google-cloud-auth.html
+https://googlecloudplatform.github.io/google-cloud-python/latest/core/auth.html#setting-up-a-service-account
 
 https://cloud.google.com/storage/docs/authentication#generating-a-private-key
 
@@ -49,7 +49,8 @@ Update your Django settings and use it like any other Django storage module::
 Features
 --------
 
-* Fully tested on Python 2.7, 3.3 - 3.6 and PyPy with Django 1.8, 1.9 and 1.10
+* Fully tested on Python 2.7, 3.4 - 3.7, PyPy 2.7-6.0.0 and PyPy 3.5-6.0.0 with
+  Django 1.11 and 2.0 - 2.1
 * Files are locally downloaded as SpooledTemporaryFile objects to avoid memory
   abuse
 * Changed files will automatically be reuploaded to GCS when closed
@@ -64,11 +65,14 @@ Caveats
 Unsigned URLS
 -------------
 
-The module generates signed urls by default. This requires calls to storage API which might take some time if you need to return several images at a time. You can generate unsigned urls using the following setting::
+The module generates signed urls by default. This requires calls to storage API
+which might take some time if you need to return several objects at a time. You
+can generate unsigned urls using the following setting::
 
   GCS_USE_UNSIGNED_URLS = True
 
-Keep in mind you might need to set the default object permission to public for the unsigned urls to work.
+Keep in mind you might need to set the default object permission to public for
+the unsigned urls to work.
 
 Contributing
 ------------
