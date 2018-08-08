@@ -3,7 +3,7 @@
 History
 -------
 
-0.3.0 (2018-08-08)
+0.3.1 (2018-08-08)
 ~~~~~~~~~~~~~~~~~~
 
 * Updated test support versions for Django 1.11 - 2.1
