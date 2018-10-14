@@ -1,18 +1,26 @@
+# coding=utf-8
+from __future__ import unicode_literals
+
 import os
 import string
-from contextlib import contextmanager
 
 import pytest
 from django.utils.crypto import get_random_string
+from django.utils import six
 
 from django_gcloud_storage import DjangoGCloudStorage
+from google.cloud.storage import Bucket
+
+from helpers import upload_test_file
 
 DEFAULT_CREDENTIALS_PATH = os.path.join(
     os.path.dirname(os.path.realpath(__file__)),
     "..",
     "test-credentials.json"
 )
-
+DEFAULT_BUCKET_LOCATION="europe-west3"
+TEST_FILE_PATH = "general_test_file"
+TEST_FILE_CONTENT = "Brathähnchen".encode("utf8")
 
 def pytest_addoption(parser):
     parser.addoption("--gcs-credentials-file",
@@ -20,13 +28,15 @@ def pytest_addoption(parser):
                      default=DEFAULT_CREDENTIALS_PATH,
                      help="Defaults to PROJECT_DIR/test-credentials.json")
     parser.addoption("--gcs-project-name", action="store")
+    parser.addoption("--gcs-bucket-location", action="store",
+                     default=DEFAULT_BUCKET_LOCATION,
+                     help="Defaults to " + DEFAULT_BUCKET_LOCATION)
 
 
-@contextmanager
-def storage_object_for_tests(request, bucket_name=None):
-    if bucket_name is None:
-        # create a random test bucket name
-        bucket_name = "test_bucket_" + get_random_string(6, string.ascii_lowercase)
+@pytest.fixture(scope="module")
+def storage(request):
+    # create a random test bucket name
+    bucket_name = "test_bucket_" + get_random_string(6, string.ascii_lowercase)
 
     storage = DjangoGCloudStorage(
         project=request.config.getoption("--gcs-project-name"),
@@ -35,34 +45,30 @@ def storage_object_for_tests(request, bucket_name=None):
     )
 
     # Make sure the bucket exists
-    storage.client.create_bucket(bucket_name)
+    bucket = Bucket(storage.client, bucket_name)
+    bucket.location = request.config.getoption("--gcs-bucket-location")
+    bucket.create()
 
     yield storage
 
-    # Manually delete all remaining blobs due to a unicode issue in google.cloud
-    from django_gcloud_storage import prepare_name
-    for blob in storage.bucket.list_blobs():
-        storage.bucket.delete_blob(prepare_name(blob.name))
+    storage.bucket.delete_blobs(storage.bucket.list_blobs())
 
     storage.bucket.delete(force=True)
 
+@pytest.fixture(scope="module")
+def test_file(storage):
+    path = upload_test_file(storage, TEST_FILE_PATH, TEST_FILE_CONTENT)
+    yield path
+    storage.delete(path)
 
-@pytest.yield_fixture(scope="session")
-def gcs_settings(request):
-    # create a random test bucket name
-    bucket_name = "test_bucket_" + get_random_string(6, string.ascii_lowercase)
+@pytest.fixture(scope="module")
+def gcs_settings(request, storage):
+    bucket_name = storage.bucket.name
 
-    with storage_object_for_tests(request, bucket_name=bucket_name):
-        from django.test import override_settings
-        with override_settings(
-            GCS_PROJECT=request.config.getoption("--gcs-project-name"),
-            GCS_CREDENTIALS_FILE_PATH=request.config.getoption("--gcs-credentials-file"),
-            GCS_BUCKET=bucket_name
-        ):
-            yield True
-
-
-@pytest.yield_fixture(scope="class")
-def storage_object(request):
-    with storage_object_for_tests(request) as storage:
-        yield storage
+    from django.test import override_settings
+    with override_settings(
+        GCS_PROJECT=request.config.getoption("--gcs-project-name"),
+        GCS_CREDENTIALS_FILE_PATH=request.config.getoption("--gcs-credentials-file"),
+        GCS_BUCKET=bucket_name
+    ):
+        yield True
