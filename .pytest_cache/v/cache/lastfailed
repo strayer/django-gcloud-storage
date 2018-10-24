@@ -1,0 +1,22 @@
+{
+  "tests/test_class.py::TestGCloudStorageClass::()::test_changed_files_should_be_reuploaded": true,
+  "tests/test_class.py::TestGCloudStorageClass::()::test_exists_method": true,
+  "tests/test_class.py::TestGCloudStorageClass::()::test_open_should_be_able_to_create_new_file": true,
+  "tests/test_class.py::TestGCloudStorageClass::()::test_should_be_able_to_delete_files": true,
+  "tests/test_class.py::TestGCloudStorageClass::()::test_should_be_able_to_list_dirs_and_files": true,
+  "tests/test_class.py::TestGCloudStorageClass::()::test_should_be_able_to_save_and_open_files": true,
+  "tests/test_class.py::TestGCloudStorageClass::()::test_should_create_a_valid_bucket_object": true,
+  "tests/test_class.py::TestGCloudStorageClass::()::test_should_create_a_valid_client_object": true,
+  "tests/test_class.py::TestGCloudStorageClass::()::test_should_create_blob_at_correct_path": true,
+  "tests/test_class.py::TestGCloudStorageClass::()::test_should_not_overwrite_files_on_save": true,
+  "tests/test_class.py::TestGCloudStorageClass::()::test_should_return_correct_file_size": true,
+  "tests/test_class.py::TestGCloudStorageClass::()::test_should_return_created_time": true,
+  "tests/test_class.py::TestGCloudStorageClass::()::test_should_return_modified_time": true,
+  "tests/test_class.py::TestGCloudStorageClass::()::test_should_return_publicly_downloadable_url": true,
+  "tests/test_class.py::TestGCloudStorageClass::()::test_should_work_with_utf8": true,
+  "tests/test_class.py::TestGCloudStorageClass::()::test_use_unsigned_urls_option": true,
+  "tests/test_django.py": true,
+  "tests/test_django.py::TestApp::()::test_file_access": true,
+  "tests/test_django.py::TestApp::()::test_http_upload": true,
+  "tests/test_django.py::TestApp::()::test_manual_upload": true
+}

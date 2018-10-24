@@ -219,3 +219,17 @@ class TestGCloudStorageClass:
         storage.use_unsigned_urls = False
         for i in ["Signature=", "GoogleAccessId=", "Expires="]:
             assert i not in url
+
+    def test_caching_disabled(self, storage, test_file):
+        storage.gcs_enable_cached_urls = False
+        url_short_expiry = storage.url(test_file)
+        storage.gcs_token_validity_seconds = storage.gcs_token_validity_seconds * 2
+        url_long_expiry = storage.url(test_file)
+        assert url_short_expiry != url_long_expiry
+
+    def test_caching_enabled(self, storage, test_file):
+        storage.gcs_enable_cached_urls = True
+        url_short_expiry = storage.url(test_file)
+        storage.gcs_token_validity_seconds = storage.gcs_token_validity_seconds * 2
+        url_long_expiry = storage.url(test_file)
+        assert url_short_expiry == url_long_expiry
