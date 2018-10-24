@@ -28,7 +28,7 @@ with open('HISTORY.rst') as f:
     history = f.read().replace('.. :changelog:', '')
 
 setup(
-    name='django-gcloud-storage',
+    name='django-gcloud-storage-mjc',
     version=version,
     description="""Django storage module implementation for Google Cloud Storage""",
     long_description=readme + '\n\n' + history,
