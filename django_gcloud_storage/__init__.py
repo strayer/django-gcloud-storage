@@ -5,6 +5,7 @@ import datetime
 import os
 import re
 from tempfile import SpooledTemporaryFile
+import mimetypes
 
 import django
 from django.conf import settings
@@ -162,9 +163,14 @@ class DjangoGCloudStorage(Storage):
 
         # Required for InMemoryUploadedFile objects, as they have no fileno
         total_bytes = None if not hasattr(content, 'size') else content.size
+        content_type = None if not hasattr(content, 'content_type') else content.content_type
+        if content_type is None:
+            _, file_extension = os.path.splitext(name)
+            content_type = mimetypes.types_map.get(file_extension, None)
+
 
         blob = self.bucket.blob(name)
-        blob.upload_from_file(content, size=total_bytes)
+        blob.upload_from_file(content, size=total_bytes, content_type=content_type)
 
         return name
 
