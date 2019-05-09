@@ -135,6 +135,7 @@ class DjangoGCloudStorage(Storage):
             self.use_unsigned_urls = getattr(settings, "GCS_USE_UNSIGNED_URLS", False)
 
         self.bucket_subdir = ''  # TODO should be a parameter
+        self.default_content_type = 'application/octet-stream'
 
     @property
     def client(self):
@@ -163,11 +164,11 @@ class DjangoGCloudStorage(Storage):
 
         # Required for InMemoryUploadedFile objects, as they have no fileno
         total_bytes = None if not hasattr(content, 'size') else content.size
-        content_type = None if not hasattr(content, 'content_type') else content.content_type
-        if content_type is None:
-            _, file_extension = os.path.splitext(name)
-            content_type = mimetypes.types_map.get(file_extension, None)
 
+        # Set correct mimetype or fallback to default
+        _type, _ = mimetypes.guess_type(name)
+        content_type = getattr(content, 'content_type', None)
+        content_type = content_type or _type or self.default_content_type
 
         blob = self.bucket.blob(name)
         blob.upload_from_file(content, size=total_bytes, content_type=content_type)
