@@ -219,3 +219,9 @@ class TestGCloudStorageClass:
         storage.use_unsigned_urls = False
         for i in ["Signature=", "GoogleAccessId=", "Expires="]:
             assert i not in url
+
+    def test_correctly_detect_mimetype(self, storage):
+        file_name = "test.jpg"
+        upload_test_file(storage, file_name, "")
+
+        assert "image/jpeg" == urlopen(storage.url(file_name)).info().get("Content-Type")

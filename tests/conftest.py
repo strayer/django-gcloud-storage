@@ -46,8 +46,9 @@ def storage(request):
 
     # Make sure the bucket exists
     bucket = Bucket(storage.client, bucket_name)
-    bucket.location = request.config.getoption("--gcs-bucket-location")
-    bucket.create()
+    bucket.create(
+        location=request.config.getoption("--gcs-bucket-location")
+    )
 
     yield storage
 

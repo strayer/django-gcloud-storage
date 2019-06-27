@@ -5,6 +5,7 @@ import datetime
 import os
 import re
 from tempfile import SpooledTemporaryFile
+import mimetypes
 
 import django
 from django.conf import settings
@@ -18,7 +19,7 @@ from google.cloud import storage
 from google.cloud.exceptions import NotFound
 from google.cloud.storage.bucket import Bucket
 
-__version__ = '0.3.1'
+__version__ = '0.4.0'
 
 DJANGO_17 = django.get_version().startswith('1.7.')
 
@@ -134,6 +135,7 @@ class DjangoGCloudStorage(Storage):
             self.use_unsigned_urls = getattr(settings, "GCS_USE_UNSIGNED_URLS", False)
 
         self.bucket_subdir = ''  # TODO should be a parameter
+        self.default_content_type = 'application/octet-stream'
 
     @property
     def client(self):
@@ -163,8 +165,13 @@ class DjangoGCloudStorage(Storage):
         # Required for InMemoryUploadedFile objects, as they have no fileno
         total_bytes = None if not hasattr(content, 'size') else content.size
 
+        # Set correct mimetype or fallback to default
+        _type, _ = mimetypes.guess_type(name)
+        content_type = getattr(content, 'content_type', None)
+        content_type = content_type or _type or self.default_content_type
+
         blob = self.bucket.blob(name)
-        blob.upload_from_file(content, size=total_bytes)
+        blob.upload_from_file(content, size=total_bytes, content_type=content_type)
 
         return name
 

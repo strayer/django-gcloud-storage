@@ -3,6 +3,13 @@
 History
 -------
 
+0.4.0 (2019-06-27)
+~~~~~~~~~~~~~~~~~~
+
+* Autodetect and set object Content-Type on upload
+* Added test support for Django 2.2
+* Dropped test support for Django 2.0
+
 0.3.1 (2018-08-08)
 ~~~~~~~~~~~~~~~~~~
 
