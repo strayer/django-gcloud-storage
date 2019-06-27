@@ -6,10 +6,7 @@ from test_app.app.forms import TestUploadForm
 from test_app.app.models import ModelWithFileField
 
 import django
-if django.VERSION < (2, 0):
-    from django.core.urlresolvers import reverse_lazy
-else:
-    from django.urls import reverse_lazy
+from django.urls import reverse_lazy
 
 
 class TestUploadView(FormView):
