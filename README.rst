@@ -49,8 +49,8 @@ Update your Django settings and use it like any other Django storage module::
 Features
 --------
 
-* Fully tested on Python 2.7, 3.4 - 3.7, PyPy 2.7-6.0.0 and PyPy 3.5-6.0.0 with
-  Django 1.11 and 2.0 - 2.1
+* Fully tested on Python 2.7, 3.4 - 3.7, PyPy 2.7-7.1.1 and PyPy 3.6-7.1.1 with
+  Django 1.11 and 2.1 - 2.2
 * Files are locally downloaded as SpooledTemporaryFile objects to avoid memory
   abuse
 * Changed files will automatically be reuploaded to GCS when closed
