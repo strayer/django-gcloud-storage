@@ -19,7 +19,7 @@ from google.cloud import storage
 from google.cloud.exceptions import NotFound
 from google.cloud.storage.bucket import Bucket
 
-__version__ = '0.3.1'
+__version__ = '0.4.0'
 
 DJANGO_17 = django.get_version().startswith('1.7.')
 
