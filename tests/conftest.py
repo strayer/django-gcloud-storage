@@ -6,7 +6,6 @@ import string
 
 import pytest
 from django.utils.crypto import get_random_string
-from django.utils import six
 
 from django_gcloud_storage import DjangoGCloudStorage
 from google.cloud.storage import Bucket

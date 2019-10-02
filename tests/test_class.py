@@ -3,12 +3,12 @@ from __future__ import unicode_literals
 
 import datetime
 import ssl
+import sys
 from tempfile import TemporaryFile
 
 import google.cloud.exceptions
 import pytest
 from django.core.exceptions import SuspiciousFileOperation
-from django.utils import six
 
 from django_gcloud_storage import safe_join, remove_prefix, GCloudFile
 
@@ -84,7 +84,7 @@ class TestGCloudFile:
 
         f = GCloudFile(None)
         f.open("w")
-        assert f.read() == (b"" if six.PY3 else "")
+        assert f.read() == (b"" if sys.hexversion >= 0x3000000 else "")
         f.write(self.TEST_CONTENT)
         f.seek(0)
         assert f.read() == self.TEST_CONTENT

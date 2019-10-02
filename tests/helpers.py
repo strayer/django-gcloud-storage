@@ -1,9 +1,9 @@
 from tempfile import TemporaryFile
 
-from django.utils import six
+import sys
 
 def upload_test_file(storage, name, content):
-    if six.PY3 and isinstance(content, str):
+    if sys.hexversion >= 0x3000000 and isinstance(content, str):
         content = content.encode("utf8")
 
     with TemporaryFile() as testfile:
