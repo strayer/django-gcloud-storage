@@ -1,6 +1,4 @@
 # coding=utf-8
-from __future__ import unicode_literals
-
 import os
 import string
 
@@ -44,14 +42,9 @@ def storage(request):
     )
 
     # Make sure the bucket exists
-    bucket = Bucket(storage.client, bucket_name)
-    bucket.create(
-        location=request.config.getoption("--gcs-bucket-location")
-    )
+    storage.client.create_bucket(bucket_name, location=request.config.getoption("--gcs-bucket-location"))
 
     yield storage
-
-    storage.bucket.delete_blobs(storage.bucket.list_blobs())
 
     storage.bucket.delete(force=True)
 

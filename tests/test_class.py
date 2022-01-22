@@ -1,10 +1,7 @@
 # coding=utf-8
-from __future__ import unicode_literals
-
 import datetime
 import ssl
 import sys
-from tempfile import TemporaryFile
 
 import google.cloud.exceptions
 import pytest
@@ -134,7 +131,6 @@ class TestGCloudStorageClass:
         assert isinstance(storage.created_time(test_file), datetime.datetime)
 
     def test_should_return_modified_time(self, storage, test_file):
-        assert isinstance(storage.modified_time(test_file), datetime.datetime)
         assert isinstance(storage.get_modified_time(test_file), datetime.datetime)
 
     def test_should_be_able_to_delete_files(self, storage):
@@ -192,7 +188,7 @@ class TestGCloudStorageClass:
         file_content = "gcloud".encode("ascii")
 
         upload_test_file(storage, file_name, "")
-        first_modified_time = storage.modified_time(file_name)
+        first_modified_time = storage.get_modified_time(file_name)
         local_tmpfile = storage.open(file_name)
 
         assert local_tmpfile.read() == "".encode("ascii")
@@ -202,7 +198,7 @@ class TestGCloudStorageClass:
         local_tmpfile.close()
 
         assert storage.open(file_name).read() == file_content
-        assert storage.modified_time(file_name) != first_modified_time
+        assert storage.get_modified_time(file_name) != first_modified_time
 
     def test_open_should_be_able_to_create_new_file(self, storage):
         file_name = "test_open_creates_file"

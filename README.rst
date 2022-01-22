@@ -31,12 +31,11 @@ Install django-gcloud-storage::
     pip install django-gcloud-storage
 
 Create a GCS service account JSON keyfile and a bucket for your application.
-Check the documentation of google-cloud-python and Google Cloud Platform for
-more details:
+Check the documentation of Google Cloud Platform for more details:
 
-https://googlecloudplatform.github.io/google-cloud-python/latest/core/auth.html#setting-up-a-service-account
+https://cloud.google.com/iam/docs/creating-managing-service-accounts#creating
 
-https://cloud.google.com/storage/docs/authentication#generating-a-private-key
+https://cloud.google.com/iam/docs/creating-managing-service-account-keys#creating
 
 Update your Django settings and use it like any other Django storage module::
 
@@ -49,8 +48,8 @@ Update your Django settings and use it like any other Django storage module::
 Features
 --------
 
-* Fully tested on Python 2.7, 3.4 - 3.7, PyPy 2.7-7.1.1 and PyPy 3.6-7.1.1 with
-  Django 1.11 and 2.1 - 2.2
+* Fully tested on Python 3.7 - 3.10, PyPy 3.7-7.3.7 and PyPy 3.8-7.3.7 with
+  Django 2.2 and 3.2
 * Files are locally downloaded as SpooledTemporaryFile objects to avoid memory
   abuse
 * Changed files will automatically be reuploaded to GCS when closed

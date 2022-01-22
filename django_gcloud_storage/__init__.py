@@ -6,6 +6,7 @@ import os
 import re
 from tempfile import SpooledTemporaryFile
 import mimetypes
+import urllib.parse
 
 import django
 from django.conf import settings
@@ -21,15 +22,6 @@ from google.cloud.storage.bucket import Bucket
 
 __version__ = '0.4.0'
 
-DJANGO_17 = django.get_version().startswith('1.7.')
-
-try:
-    # For Python 3.0 and later
-    from urllib import parse as urlparse
-except ImportError:
-    # Fall back to Python 2's urllib2
-    import urlparse
-
 
 def safe_join(base, path):
     base = force_text(base).replace("\\", "/").lstrip("/").rstrip("/") + "/"
@@ -39,7 +31,7 @@ def safe_join(base, path):
     if base == "/":
         base = ""
 
-    resolved_url = urlparse.urljoin(base, path)
+    resolved_url = urllib.parse.urljoin(base, path)
 
     resolved_url = re.sub("//+", "/", resolved_url)
 
@@ -84,13 +76,7 @@ class GCloudFile(File):
     def _update_blob(self):
         # Specify explicit size to avoid problems with not yet spooled temporary files
         # Djangos File.size property already knows how to handle cases like this
-
-        if DJANGO_17 and self._tmpfile.name is None:  # Django bug #22307
-            size = self._tmpfile.tell()
-        else:
-            size = self.size
-
-        self._blob.upload_from_file(self._tmpfile, size=size, rewind=True)
+        self._blob.upload_from_file(self._tmpfile, size=self.size, rewind=True)
 
     def write(self, content):
         self._dirty = True
@@ -228,17 +214,13 @@ class DjangoGCloudStorage(Storage):
 
         return blob.size if blob is not None else None
 
-    def modified_time(self, name):
+    def get_modified_time(self, name):
         name = safe_join(self.bucket_subdir, name)
         name = prepare_name(name)
 
         blob = self.bucket.get_blob(name)
 
         return blob.updated if blob is not None else None
-
-    def get_modified_time(self, name):
-        # In Django>=1.10, modified_time is deprecated, and modified_time will be removed in Django 2.0.
-        return self.modified_time(name)
 
     def listdir(self, path):
         path = safe_join(self.bucket_subdir, path)

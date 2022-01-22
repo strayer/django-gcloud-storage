@@ -1,21 +1,15 @@
 # coding=utf-8
-from __future__ import unicode_literals
-
 import contextlib
 import os
 import shutil
 import tempfile
+from tempfile import TemporaryDirectory
 
 import pytest
 from django.core.files import File
 from django.utils.crypto import get_random_string
 
 from test_app.app.models import ModelWithFileField
-
-try:
-    from tempfile import TemporaryDirectory
-except ImportError:
-    from setuptools.py31compat import TemporaryDirectory
 
 
 @contextlib.contextmanager
