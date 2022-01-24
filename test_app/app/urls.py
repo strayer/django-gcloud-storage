@@ -13,15 +13,15 @@ Including another URLconf
     1. Add an import:  from blog import urls as blog_urls
     2. Add a URL to urlpatterns:  url(r'^blog/', include(blog_urls))
 """
-from django.conf.urls import url
+from django.urls import re_path
 from django.views.generic.base import TemplateView
 
 from test_app.app import views
 
 urlpatterns = [
-    url(r'^upload$', views.TestUploadView.as_view()),
-    url(r'^upload/success',
+    re_path(r'^upload$', views.TestUploadView.as_view()),
+    re_path(r'^upload/success',
         TemplateView.as_view(template_name="success.html"),
         name='upload_success'),
-    url(r'^file/(?P<id>[0-9]+)$', views.file),
+    re_path(r'^file/(?P<id>[0-9]+)$', views.file),
 ]
