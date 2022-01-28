@@ -20,7 +20,7 @@ from google.cloud import storage
 from google.cloud.exceptions import NotFound
 from google.cloud.storage.bucket import Bucket
 
-__version__ = '0.4.0'
+__version__ = '0.5.0'
 
 
 def safe_join(base, path):
