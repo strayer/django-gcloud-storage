@@ -6,9 +6,9 @@ History
 Unreleased
 ~~~~~~~~~~
 
+* Added support for Django 4.0, 3.2 and 2.2
 * Added support for Python 3.8, 3.9 and 3.10
 * Added support for PyPy 3.7 and 3.8
-* Added support for Django 2.2 and 3.2
 * Dropped suport for now unsupported Python and Django versions:
     * Python 2.7, 3.4, 3.5 and 3.6
     * Django 1.11, 2.1 and 3.0

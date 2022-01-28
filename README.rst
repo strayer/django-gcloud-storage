@@ -49,7 +49,7 @@ Features
 --------
 
 * Fully tested on Python 3.7 - 3.10, PyPy 3.7-7.3.7 and PyPy 3.8-7.3.7 with
-  Django 2.2 and 3.2
+  Django 2.2, 3.2 and 4.0
 * Files are locally downloaded as SpooledTemporaryFile objects to avoid memory
   abuse
 * Changed files will automatically be reuploaded to GCS when closed
