@@ -157,7 +157,7 @@ class DjangoGCloudStorage(Storage):
         content_type = content_type or _type or self.default_content_type
 
         blob = self.bucket.blob(name)
-        blob.upload_from_file(content, size=total_bytes, content_type=content_type)
+        blob.upload_from_file(content, size=total_bytes, content_type=content_type, predefined_acl=getattr(settings, "GS_AUTO_CREATE_ACL", None))
 
         return name
 
