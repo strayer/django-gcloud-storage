@@ -44,6 +44,10 @@ Update your Django settings and use it like any other Django storage module::
     GCS_PROJECT = "django-gcloud-storage"
     GCS_BUCKET = "django-gcloud-storage-bucket"
     GCS_CREDENTIALS_FILE_PATH = "/path/to/gcs-credentials.json"
+    GS_AUTO_CREATE_ACL = 'publicRead'
+
+More info for GS_AUTO_CREATE_ACL:
+https://cloud.google.com/storage/docs/access-control/lists#predefined-acl
 
 Features
 --------
