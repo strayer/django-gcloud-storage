@@ -14,7 +14,7 @@ from django.core.exceptions import SuspiciousFileOperation
 from django.core.files.base import File
 from django.core.files.storage import Storage
 from django.utils.deconstruct import deconstructible
-from django.utils.encoding import force_text, smart_str
+from django.utils.encoding import force_str, smart_str
 from google.cloud import _helpers as gcloud_helpers
 from google.cloud import storage
 from google.cloud.exceptions import NotFound
@@ -24,8 +24,8 @@ __version__ = '0.4.0'
 
 
 def safe_join(base, path):
-    base = force_text(base).replace("\\", "/").lstrip("/").rstrip("/") + "/"
-    path = force_text(path).replace("\\", "/").lstrip("/")
+    base = force_str(base).replace("\\", "/").lstrip("/").rstrip("/") + "/"
+    path = force_str(path).replace("\\", "/").lstrip("/")
 
     # Ugh... there must be a better way that I can't think of right now
     if base == "/":
