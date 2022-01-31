@@ -185,11 +185,7 @@ class DjangoGCloudStorage(Storage):
 
         blob = self.bucket.get_blob(name)
 
-        # google.cloud doesn't provide a public method for this
-        value = blob._properties.get("timeCreated", None)
-        if value is not None:
-            naive = datetime.datetime.strptime(value, gcloud_helpers._RFC3339_MICROS)
-            return naive.replace(tzinfo=gcloud_helpers.UTC)
+        return blob.time_created if blob else None
 
     def delete(self, name):
         name = safe_join(self.bucket_subdir, name)
