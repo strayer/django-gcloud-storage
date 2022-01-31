@@ -15,7 +15,6 @@ from django.core.files.base import File
 from django.core.files.storage import Storage
 from django.utils.deconstruct import deconstructible
 from django.utils.encoding import force_str, smart_str
-from google.cloud import _helpers as gcloud_helpers
 from google.cloud import storage
 from google.cloud.exceptions import NotFound
 from google.cloud.storage.bucket import Bucket
