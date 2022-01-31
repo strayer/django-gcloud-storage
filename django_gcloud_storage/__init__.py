@@ -15,7 +15,6 @@ from django.core.files.base import File
 from django.core.files.storage import Storage
 from django.utils.deconstruct import deconstructible
 from django.utils.encoding import force_str, smart_str
-from google.cloud import _helpers as gcloud_helpers
 from google.cloud import storage
 from google.cloud.exceptions import NotFound
 from google.cloud.storage.bucket import Bucket
@@ -185,11 +184,7 @@ class DjangoGCloudStorage(Storage):
 
         blob = self.bucket.get_blob(name)
 
-        # google.cloud doesn't provide a public method for this
-        value = blob._properties.get("timeCreated", None)
-        if value is not None:
-            naive = datetime.datetime.strptime(value, gcloud_helpers._RFC3339_MICROS)
-            return naive.replace(tzinfo=gcloud_helpers.UTC)
+        return blob.time_created if blob else None
 
     def delete(self, name):
         name = safe_join(self.bucket_subdir, name)
